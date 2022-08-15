@@ -1,5 +1,7 @@
 package xyz.jimbray.elevatorcontroller
 
+import android.content.Context
+import android.net.wifi.WifiManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,7 +16,6 @@ import java.net.DatagramPacket
 import java.net.InetAddress
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.experimental.and
 
 class MainViewModel : ViewModel() {
 
@@ -24,6 +25,15 @@ class MainViewModel : ViewModel() {
     var serverRunning: Boolean by mutableStateOf(false)
 
     private val CLIENT_PORT = 8888
+
+
+    private lateinit var wifiLock: WifiManager.MulticastLock
+
+    fun initWifiLock() {
+        val manager = App.getAppContext().applicationContext
+            .getSystemService(Context.WIFI_SERVICE) as WifiManager
+        wifiLock = manager.createMulticastLock("wifi")
+    }
 
     fun startUdpServer() {
         viewModelScope.launch(Dispatchers.Default) {
@@ -48,12 +58,17 @@ class MainViewModel : ViewModel() {
 
                     serverRunning = true
                     while (true) {
+
+                        wifiLock.acquire()
+
                         ds.receive(dp)
 
                         val hexDataString = dp.data.toHexString()
 
                         receiveText = "${receiveText}\n${hexDataString}"
                         parseCommand(hexDataString)
+
+                        wifiLock.release()
                     }
                 }
         }
@@ -200,6 +215,58 @@ class MainViewModel : ViewModel() {
     private fun getCurrentTime(): String? {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         return sdf.format(Date())
+    }
+
+    fun send2Server(host: String, port: Int, message: String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            flow<Unit> {
+                emit(Unit)
+            }.collect {
+//                try {
+//                    // data to send
+////            val data = message.toByteArray()
+//                    val data = byteArrayOf(
+//                        0xFF.toByte(),
+//                        0x27,
+//                        0x01,
+//                        0x00,
+//                        0x01,
+//                        0x00,
+//                        0x00,
+//                        0x00,
+//                        0x00,
+//                        0x00,
+//                        0xD8.toByte(),
+//                        0xFE.toByte()
+//                    )
+//                    // DatagramSocket to send the message
+//                    val socket = DatagramSocket(port)
+//                    // InetAddress to send the message
+//                    val address = InetAddress.getByName(host)
+//                    // DatagramPacket to send the message
+//                    val packet = DatagramPacket(data, data.size, address, port)
+//                    // send the message
+//                    socket.send(packet)
+//
+//                    "UDP message sent to $host:$port".log_d()
+//
+//                    // receive the message from the server
+////                    val receiveData = ByteArray(1024)
+////                    val receivePacket = DatagramPacket(receiveData, receiveData.size)
+////                    socket.receive(receivePacket)
+//                    // print the message
+////                    "Received from server: " + String(receivePacket.data).log_d()
+//
+//                    // 关闭socket
+////                    socket.close()
+//                } catch (e: UnknownHostException) {
+//                    e.printStackTrace()
+//                } catch (e: IOException) {
+//                    e.printStackTrace()
+//                }
+            }
+        }
+
     }
 
 

@@ -3,6 +3,7 @@ package xyz.jimbray.elevatorcontroller
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -19,8 +20,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import xyz.jimbray.elevatorcontroller.ui.theme.ElevatorControllerTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val mainViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        mainViewModel.initWifiLock()
         setContent {
             ElevatorControllerTheme {
                 // A surface container using the 'background' color from the theme
@@ -93,7 +99,9 @@ fun OperationArea() {
                 Text(text = "UDP服务端")
             })
 
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            mainViewModel.send2Server("192.168.50.16", 9999, "message is coming.")
+        }) {
             Text(text = "↑发送↑")
         }
 
