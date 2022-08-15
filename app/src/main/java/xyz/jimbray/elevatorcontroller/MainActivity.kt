@@ -26,7 +26,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mainViewModel.initWifiLock()
         setContent {
             ElevatorControllerTheme {
                 // A surface container using the 'background' color from the theme
@@ -38,6 +37,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        mainViewModel.initWifiLock()
     }
 }
 

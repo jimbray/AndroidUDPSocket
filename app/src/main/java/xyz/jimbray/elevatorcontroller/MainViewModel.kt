@@ -27,12 +27,14 @@ class MainViewModel : ViewModel() {
     private val CLIENT_PORT = 8888
 
 
-    private lateinit var wifiLock: WifiManager.MulticastLock
+    private var wifiLock: WifiManager.MulticastLock? = null
 
     fun initWifiLock() {
-        val manager = App.getAppContext().applicationContext
-            .getSystemService(Context.WIFI_SERVICE) as WifiManager
-        wifiLock = manager.createMulticastLock("wifi")
+        if (wifiLock == null) {
+            val manager = App.getAppContext().applicationContext
+                .getSystemService(Context.WIFI_SERVICE) as WifiManager
+            wifiLock = manager.createMulticastLock("wifi")
+        }
     }
 
     fun startUdpServer() {
@@ -59,16 +61,16 @@ class MainViewModel : ViewModel() {
                     serverRunning = true
                     while (true) {
 
-                        wifiLock.acquire()
+//                        wifiLock?.acquire()
 
                         ds.receive(dp)
 
-                        val hexDataString = dp.data.toHexString()
+                        val hexDataString = Common.BinaryToHexString(dp.data)
 
                         receiveText = "${receiveText}\n${hexDataString}"
                         parseCommand(hexDataString)
 
-                        wifiLock.release()
+//                        wifiLock?.release()
                     }
                 }
         }

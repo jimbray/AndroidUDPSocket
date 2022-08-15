@@ -3,6 +3,7 @@ package xyz.jimbray.elevatorcontroller
 import java.lang.Exception
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.net.InetSocketAddress
 
 class ServerSocket private constructor() {
 
@@ -42,7 +43,9 @@ class ServerSocket private constructor() {
     init {
         instance = this
         try {
-            socket = DatagramSocket(PORT, InetAddress.getLocalHost())
+            socket = DatagramSocket(null)
+            socket.reuseAddress = true
+            socket.bind(InetSocketAddress(PORT))
             isSocketClosed = false
         } catch (e: Exception) {
             e.printStackTrace()
