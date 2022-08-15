@@ -54,9 +54,9 @@ class MainViewModel : ViewModel() {
                     it.log_d()
                     val ds = ServerSocket.getInstance().getSocket()
 
-                    val buf = ByteArray(12)
+                    var buf = ByteArray(12)
 
-                    val dp = DatagramPacket(buf, buf.size)
+                    var dp = DatagramPacket(buf, buf.size)
 
                     serverRunning = true
                     while (true) {
@@ -71,6 +71,11 @@ class MainViewModel : ViewModel() {
                         parseCommand(hexDataString)
 
 //                        wifiLock?.release()
+
+//                        val sendStr = "Server send: hello!"
+//                        buf = sendStr.toByteArray()
+//                        dp = DatagramPacket(buf, buf.size, dp.getAddress(), dp.getPort())
+//                        ds.send(dp)
                     }
                 }
         }
@@ -82,7 +87,7 @@ class MainViewModel : ViewModel() {
 
     fun openDoor(liftFloorId: String, isOpen: Boolean) {
         val command = generateCommand(liftFloorId, isOpen)
-        command?.let { sendCommand2Client("192.168.50.7", it) }
+        command?.let { sendCommand2Client("192.168.50.16", it) }
     }
 
     private fun sendCommand2Client(clientIp: String, command: String) {
