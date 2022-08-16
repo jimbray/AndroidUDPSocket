@@ -75,8 +75,8 @@ class MainViewModel : ViewModel() {
 
 //                        wifiLock?.release()
 
-                        "返回消息到客户端 clientip : ${dp.address.hostAddress} | port: ${dp.port}".log_d()
-                        val sendStr = "Server send: hello! from ${dp.address.hostName}"
+//                        "返回消息到客户端 clientip : ${dp.address.hostAddress} | port: ${dp.port}".log_d()
+//                        val sendStr = "Server send: hello! from ${dp.address.hostName}"
 
 //                        sendCommand2Client("192.168.50.16", "FF 00")
 
@@ -97,9 +97,9 @@ class MainViewModel : ViewModel() {
 
             viewModelScope.launch(Dispatchers.Default) {
                 flow {
-                    emit("192.168.50.16")
+                    emit("192.168.50.6")
                 }.collect {
-                    sendCommand2Client(it, "FF 01")
+                    sendCommand2Client(it, command)
                 }
             }
         }

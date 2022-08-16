@@ -116,13 +116,13 @@ fun OperationArea() {
                 .fillMaxHeight()
                 .weight(1f)) {
             Button(onClick = {
-                mainViewModel.openDoor("01", true)
+                mainViewModel.openDoor("04", true)
             }) {
                 Text(text = "开门指令")
             }
 
             Button(onClick = {
-                mainViewModel.openDoor("01", false)
+                mainViewModel.openDoor("04", false)
             }) {
                 Text(text = "关门指令")
             }
