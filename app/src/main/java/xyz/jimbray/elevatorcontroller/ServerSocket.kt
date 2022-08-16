@@ -34,7 +34,9 @@ class ServerSocket private constructor() {
                 instance = ServerSocket()
             }
             if (socket == null) {
-                socket = DatagramSocket(PORT, InetAddress.getLocalHost())
+                socket = DatagramSocket(null)
+                socket.reuseAddress = true
+                socket.bind(InetSocketAddress(PORT))
             }
             return instance!!
         }

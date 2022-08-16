@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import java.net.DatagramPacket
+import java.net.DatagramSocket
 import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -72,9 +74,13 @@ class MainViewModel : ViewModel() {
 
 //                        wifiLock?.release()
 
-//                        val sendStr = "Server send: hello!"
-//                        buf = sendStr.toByteArray()
-//                        dp = DatagramPacket(buf, buf.size, dp.getAddress(), dp.getPort())
+                        "返回消息到客户端 clientip : ${dp.address.hostAddress} | port: ${dp.port}".log_d()
+                        val sendStr = "Server send: hello! from ${dp.address.hostName}"
+                        buf = sendStr.toByteArray()
+
+                        sendCommand2Client(dp.address, sendStr)
+
+//                        dp = DatagramPacket(buf, buf.size, dp.address, dp.port)
 //                        ds.send(dp)
                     }
                 }
@@ -87,14 +93,17 @@ class MainViewModel : ViewModel() {
 
     fun openDoor(liftFloorId: String, isOpen: Boolean) {
         val command = generateCommand(liftFloorId, isOpen)
-        command?.let { sendCommand2Client("192.168.50.16", it) }
+//        command?.let { sendCommand2Client("192.168.50.16", it) }
     }
 
-    private fun sendCommand2Client(clientIp: String, command: String) {
+    private fun sendCommand2Client(clientIp: InetAddress, command: String) {
         "发送指令到客户端: $clientIp:$CLIENT_PORT".log_d()
         // 创建 DatagramSocket
         try {
             val ds = ServerSocket.getInstance().getSocket()
+//            val ds = DatagramSocket(null)
+//            ds.reuseAddress = true
+//            ds.bind(InetSocketAddress(InetAddress.getLocalHost(), 9999))
             // 创建发送缓冲区
             val buf = Common.hexStringToByteArray(command)
 
@@ -116,7 +125,7 @@ class MainViewModel : ViewModel() {
             "发送数据: [${Common.BinaryToHexString(buf)}]".log_d()
 
             // 创建发送对象
-            val dp = DatagramPacket(buf, buf.size, InetAddress.getByName(clientIp), CLIENT_PORT)
+            val dp = DatagramPacket(buf, buf.size, clientIp, CLIENT_PORT)
             // 发送数据
             ds.send(dp)
         } catch (e: Exception) {
