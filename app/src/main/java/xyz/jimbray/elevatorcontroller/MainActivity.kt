@@ -39,11 +39,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        mainViewModel.initWifiLock()
-    }
+//    override fun onResume() {
+//        super.onResume()
+//
+//        mainViewModel.initWifiLock()
+//    }
 }
 
 @Composable
@@ -96,7 +96,7 @@ fun OperationArea() {
             .fillMaxHeight()
             .weight(1f)
             .padding(16.dp),
-            value = "",
+            value = mainViewModel.receiveText,
             onValueChange = {
                 mainViewModel.receiveText = it
             },
