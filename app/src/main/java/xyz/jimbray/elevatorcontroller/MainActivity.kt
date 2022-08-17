@@ -63,7 +63,7 @@ fun TopBar(title: String) {
         verticalAlignment = Alignment.CenterVertically, modifier = Modifier
             .height(48.dp)
             .fillMaxWidth()
-            .padding(start = 8.dp)
+            .padding(start = 8.dp, end = 8.dp)
     ) {
         Text(
             text = title, fontSize = 16.sp,
@@ -93,10 +93,11 @@ fun OperationArea() {
     Column(verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxSize()) {
         OutlinedTextField(modifier = Modifier
-            .fillMaxHeight()
+            .fillMaxSize()
             .weight(1f)
             .padding(16.dp),
             value = mainViewModel.receiveText,
+            readOnly = true,
             onValueChange = {
                 mainViewModel.receiveText = it
             },
@@ -104,26 +105,29 @@ fun OperationArea() {
                 Text(text = "UDP服务端")
             })
 
-        Button(onClick = {
-            mainViewModel.send2Server("192.168.50.16", 9999, "message is coming.")
-        }) {
-            Text(text = "↑发送↑")
-        }
-
-
         Column(
             modifier = Modifier
                 .fillMaxHeight()
+                .padding(16.dp)
                 .weight(1f)) {
             Button(onClick = {
+                mainViewModel.send2Server("192.168.50.16", 9999, "message is coming.")
+            },
+                modifier = Modifier.fillMaxWidth()) {
+                Text(text = "↑发送到服务端")
+            }
+
+            Button(onClick = {
                 mainViewModel.openDoor("04", true)
-            }) {
+            },
+                modifier = Modifier.fillMaxWidth()) {
                 Text(text = "开门指令")
             }
 
             Button(onClick = {
                 mainViewModel.openDoor("04", false)
-            }) {
+            },
+                modifier = Modifier.fillMaxWidth()) {
                 Text(text = "关门指令")
             }
         }
